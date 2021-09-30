@@ -1,0 +1,243 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
+
+
+import pandas as pd
+import numpy as np
+import seaborn as sb
+from sklearn.neighbors import KNeighborsClassifier
+from matplotlib import pyplot as plt
+
+
+# In[1]:
+
+
+import pandas as pd
+import numpy as np
+import seaborn as sb
+from sklearn.neighbors import KNeighborsClassifier
+from matplotlib import pyplot as plt
+
+
+# In[2]:
+
+
+data=pd.read_csv(r"C:\Users\Prakhar tiwari\Downloads\KmeanClustering-main\Social_Network_Ads.csv")
+
+
+# In[3]:
+
+
+data
+
+
+# In[4]:
+
+
+data.head()
+
+
+# In[5]:
+
+
+X_feature=data.iloc[:,1:4]
+Y_target=data.iloc[:,4]
+
+
+# In[6]:
+
+
+X_feature.head()
+
+
+# In[7]:
+
+
+X_feature["Gender"]=X_feature["Gender"].map({"Male":0,"Female":1})
+
+
+# In[8]:
+
+
+X_feature.head(1)
+
+
+# In[9]:
+
+
+data.describe()
+
+
+# In[10]:
+
+
+#pd.get_dummies(data)
+
+
+# In[11]:
+
+
+#split
+from sklearn.model_selection import train_test_split
+
+
+# In[12]:
+
+
+Xtrain,Xtest,Ytrain,Ytest=train_test_split(X_feature,Y_target,test_size=.30,random_state=101)
+
+
+# In[13]:
+
+
+#print("Simple in X_train {} and Ytrain {}",.format(len(Xtrain)),(len(Ytrain)))
+#print("Simple in X_test {} and Ytest {}",.format(len(Xtest),(len(Ytest))))
+
+
+# In[14]:
+
+
+#training 
+k=int(np.sqrt(len(Xtrain)))+1
+k_range=range(1,k)
+from sklearn.metrics import accuracy_score
+
+
+# In[15]:
+
+
+acc_list=[]
+for i in k_range:
+    knn_model=KNeighborsClassifier(n_neighbors=i)
+    knn_model=knn_model.fit(Xtrain,Ytrain)
+    Yp=knn_model.predict(Xtest)
+    knn_acc=accuracy_score(Yp,Ytest)
+    acc_list.append(knn_acc)
+    print("Accuracy is {} at k={}".format(knn_acc,i))
+
+
+# In[16]:
+
+
+plt.plot(k_range,acc_list,'b+')
+plt.plot(k_range,acc_list,'r*-')
+plt.xlabel("k...>")
+plt.ylabel("Accuracy score")
+plt.show()
+
+
+# In[17]:
+
+
+#feature Scalinge
+
+
+# In[18]:
+
+
+X_feature.mean()
+
+
+# In[19]:
+
+
+X_feature.std()
+
+
+# In[20]:
+
+
+XX_feature=X_feature
+
+
+# In[21]:
+
+
+from sklearn.preprocessing import StandardScaler,MinMaxScaler
+
+
+# In[22]:
+
+
+minMaxScaler=MinMaxScaler()
+stdScaler=StandardScaler()
+
+
+# In[23]:
+
+
+XX_scaleFeature=minMaxScaler.fit_transform(XX_feature)
+
+
+# In[24]:
+
+
+XX_scaleFeature.mean()
+
+
+# In[25]:
+
+
+XX_scaleFeature.std()
+
+
+# In[26]:
+
+
+XX_Std_scaleFeature=stdScaler.fit_transform(XX_feature)
+
+
+# In[27]:
+
+
+round(XX_Std_scaleFeature.mean())
+
+
+# In[28]:
+
+
+round(XX_Std_scaleFeature.std())
+
+
+# In[29]:
+
+
+#training with XX_sacleFeature
+
+
+# In[30]:
+
+
+Xstrain,Xstest,Ystrain,Ystest=train_test_split(XX_scaleFeature,Y_target,test_size=.30,random_state=101)
+
+
+# In[34]:
+
+
+acc_list_sc=[]
+for i in k_range:
+    knn_model_sc=KNeighborsClassifier(n_neighbors=i)
+    knn_model_sc=knn_model_sc.fit(Xstrain,Ystrain)
+    Yp=knn_model_sc.predict(Xstest)
+    knn_acc=accuracy_score(Yp,Ystest)
+    acc_list_sc.append(knn_acc)
+    #print("Accuracy is {} at k={}".format(knn_acc,i))
+
+
+# In[35]:
+
+
+plt.plot(k_range,acc_list_sc,'b+')
+plt.plot(k_range,acc_list_sc,'r*-')
+plt.xlabel("k............................>")
+plt.ylabel("Accuracy score")
+plt.show()
+
+
+# In[ ]:
+
+
+
+
